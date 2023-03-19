@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Discord.Net;
 using Newtonsoft.Json;
 using Discord;
+using Discord.Interactions;
 
 namespace DC_BOT.Commands
 {
@@ -41,6 +42,7 @@ namespace DC_BOT.Commands
                         await commandHandler.HandleAsync(command);
                     }
                 };
+
 
                 if (commandHandler.IsGuildCommand)
                 {

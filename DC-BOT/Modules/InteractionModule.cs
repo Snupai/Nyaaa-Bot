@@ -35,6 +35,7 @@ namespace DNet_V3_Tutorial
 
         // Basic slash command. [SlashCommand("name", "description")]
         // Similar to text command creation, and their respective attributes
+        [DefaultMemberPermissions(GuildPermission.SendMessages)]
         [SlashCommand("ping", "Receive a pong!")]
         public async Task Ping()
         {

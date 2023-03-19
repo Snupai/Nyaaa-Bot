@@ -78,7 +78,7 @@ namespace DNet_V3_Tutorial
             await provider.GetRequiredService<InteractionHandler>().InitializeAsync();
 
             var commandStartup = new CommandStartup(_client, host);
-
+            await commandStartup.Start();
             // Subscribe to client log events
             _client.Log += _ => provider.GetRequiredService<ConsoleLogger>().Log(_);
             // Subscribe to slash command log events
@@ -146,9 +146,9 @@ namespace DNet_V3_Tutorial
 
         static bool IsDebug()
         {
-#if DEBUG
+#if !DEBUG
             return true;
-#else
+#else 
             return false;
 #endif
         }
