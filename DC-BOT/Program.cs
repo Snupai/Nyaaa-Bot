@@ -1,20 +1,15 @@
-﻿using Discord.Interactions;
+﻿using DC_BOT.Commands;
+using Discord;
+using Discord.Commands;
+using Discord.Interactions;
+using Discord.Net;
 using Discord.WebSocket;
 using DNet_V3_Tutorial.Log;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Yaml;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration.Yaml;
-using Discord.Commands;
-using Discord;
-using YamlDotNet.Core.Tokens;
-using Discord.Net;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.Net;
-using System.Security.Cryptography.X509Certificates;
-using System;
-using DC_BOT.Commands;
 
 namespace DNet_V3_Tutorial
 {
@@ -38,30 +33,33 @@ namespace DNet_V3_Tutorial
             Environment.SetEnvironmentVariable("guildId", config["testGuild"]);
             using IHost host = Host.CreateDefaultBuilder()
                 .ConfigureServices((_, services) =>
-            services
-            // Add the configuration to the registered services
-            .AddSingleton(config)
-            // Add the DiscordSocketClient, along with specifying the GatewayIntents and user caching
-            .AddSingleton(x => new DiscordSocketClient(new DiscordSocketConfig
-            {
-                GatewayIntents = Discord.GatewayIntents.AllUnprivileged,
-                LogGatewayIntentWarnings = false,
-                AlwaysDownloadUsers = true,
-                LogLevel = LogSeverity.Debug
-            }))
-            // Adding console logging
-            .AddTransient<ConsoleLogger>()
-            // Used for slash commands and their registration with Discord
-            .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
-            // Required to subscribe to the various client events used in conjunction with Interactions
-            .AddSingleton<InteractionHandler>()
-            // Adding the prefix Command Service
-            .AddSingleton(x => new CommandService(new CommandServiceConfig
-            {
-                LogLevel = LogSeverity.Debug,
-                DefaultRunMode = Discord.Commands.RunMode.Async
-            })))
-            .Build();
+                    services
+                    // Add the configuration to the registered services
+                    .AddSingleton(config)
+                    // Add the DiscordSocketClient, along with specifying the GatewayIntents and user caching
+                    .AddSingleton(x => new DiscordSocketClient(new DiscordSocketConfig
+                    {
+                        GatewayIntents = Discord.GatewayIntents.AllUnprivileged,
+                        LogGatewayIntentWarnings = false,
+                        AlwaysDownloadUsers = true,
+                        LogLevel = LogSeverity.Debug
+                    }))
+                    // Adding console logging
+                    .AddTransient<ConsoleLogger>()
+                    // Used for slash commands and their registration with Discord
+                    .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
+                    // Required to subscribe to the various client events used in conjunction with Interactions
+                    .AddSingleton<InteractionHandler>()
+                    // Adding the prefix Command Service
+                    .AddSingleton(x => new CommandService(new CommandServiceConfig
+                    {
+                        LogLevel = LogSeverity.Debug,
+                        DefaultRunMode = Discord.Commands.RunMode.Async
+                    }))
+                    // Add new command handlers here
+                    .AddSingleton<ICommandHandler, BakaCommandHandler>()
+                )
+                .Build();
 
             await RunAsync(host);
         }
