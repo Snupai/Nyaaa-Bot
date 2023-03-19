@@ -14,6 +14,7 @@ using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System;
+using DC_BOT.Commands;
 
 namespace DNet_V3_Tutorial
 {
@@ -59,8 +60,7 @@ namespace DNet_V3_Tutorial
             {
                 LogLevel = LogSeverity.Debug,
                 DefaultRunMode = Discord.Commands.RunMode.Async
-            }))
-            .AddSingleton<PrefixHandler>())
+            })))
             .Build();
 
             await RunAsync(host);
@@ -68,6 +68,7 @@ namespace DNet_V3_Tutorial
 
         public async Task RunAsync(IHost host)
         {
+
             using IServiceScope serviceScope = host.Services.CreateScope();
             IServiceProvider provider = serviceScope.ServiceProvider;
 
@@ -77,11 +78,15 @@ namespace DNet_V3_Tutorial
 
             await provider.GetRequiredService<InteractionHandler>().InitializeAsync();
 
+            var commandStartup = new CommandStartup(_client, host);
+
             // Subscribe to client log events
             _client.Log += _ => provider.GetRequiredService<ConsoleLogger>().Log(_);
             // Subscribe to slash command log events
             commands.Log += _ => provider.GetRequiredService<ConsoleLogger>().Log(_);
+
             _client.Ready += Client_Ready;
+
             _client.Ready += async () =>
             {
                 // If running the bot with DEBUG flag, register all commands to guild specified in config
@@ -99,7 +104,7 @@ namespace DNet_V3_Tutorial
 
             await Task.Delay(-1);
         }
-        public async Task Client_Ready()
+        internal async Task Client_Ready()
         {
             List<ApplicationCommandProperties> applicationCommandProperties = new();
             var guildId = Environment.GetEnvironmentVariable("guildId");
@@ -109,11 +114,6 @@ namespace DNet_V3_Tutorial
             globalCommandHelp.WithName("help");
             globalCommandHelp.WithDescription("Shows information about the bot.");
             applicationCommandProperties.Add(globalCommandHelp.Build());
-
-            SlashCommandBuilder globalCommandUser = new SlashCommandBuilder();
-            globalCommandUser.WithName("baka");
-            globalCommandUser.WithDescription("Shows information about the bot.");
-            globalCommandUser.AddOption("user", ApplicationCommandOptionType.User, "Choose a user.", isRequired: true);
 
             SlashCommandBuilder guildCommandUser = new SlashCommandBuilder();
             guildCommandUser.WithName("user-guild");
@@ -125,8 +125,6 @@ namespace DNet_V3_Tutorial
                 // Now that we have our builder, we can call the CreateApplicationCommandAsync method to make our slash command.
                 await guild.CreateApplicationCommandAsync(guildCommandUser.Build());
 
-                // With global commands we don't need the guild.
-                await _client.CreateGlobalApplicationCommandAsync(globalCommandUser.Build());
                 // Using the ready event is a simple implementation for the sake of the example. Suitable for testing and development.
                 // For a production bot, it is recommended to only run the CreateGlobalApplicationCommandAsync() once for each command.
             }
