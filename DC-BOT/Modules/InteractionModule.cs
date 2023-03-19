@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Discord.Commands;
 using Discord.Interactions;
 using Discord.Interactions.Builders;
 using Discord.Rest;
@@ -49,17 +50,15 @@ namespace DNet_V3_Tutorial
         // Here starts reactions responses
         //-------------------------------------------------------------------------------------------------------------------
 
-        
-        
-        [SlashCommand("baka", "Say baka to someone!")]
-        public async Task sfwReactBakaGif(string usr = "")
+        //[SlashCommand("baka", "Say baka to someone!")]
+        public async Task sfwReactBakaGif(string guildUser = "")
         {
             try
             {
                 string result;
                 var url = "https://gallery.fluxpoint.dev/api/sfw/gif/baka";
                 var userName = Context.User.Username;
-                var guildUser = usr;      
+                //var guildUser = "";      
                 if (userName == guildUser)
                 {
                     await RespondAsync("Don't call yourself an idiot.", ephemeral: true);

@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
+using System;
 
 namespace DNet_V3_Tutorial
 {
@@ -80,7 +81,7 @@ namespace DNet_V3_Tutorial
             _client.Log += _ => provider.GetRequiredService<ConsoleLogger>().Log(_);
             // Subscribe to slash command log events
             commands.Log += _ => provider.GetRequiredService<ConsoleLogger>().Log(_);
-
+            _client.Ready += Client_Ready;
             _client.Ready += async () =>
             {
                 // If running the bot with DEBUG flag, register all commands to guild specified in config
@@ -97,6 +98,53 @@ namespace DNet_V3_Tutorial
             await _client.StartAsync();
 
             await Task.Delay(-1);
+        }
+        public async Task Client_Ready()
+        {
+            List<ApplicationCommandProperties> applicationCommandProperties = new();
+            var guildId = Environment.GetEnvironmentVariable("guildId");
+            var guild = _client.GetGuild(UInt64.Parse(guildId));
+            // Simple help slash command.
+            SlashCommandBuilder globalCommandHelp = new SlashCommandBuilder();
+            globalCommandHelp.WithName("help");
+            globalCommandHelp.WithDescription("Shows information about the bot.");
+            applicationCommandProperties.Add(globalCommandHelp.Build());
+
+            SlashCommandBuilder globalCommandUser = new SlashCommandBuilder();
+            globalCommandUser.WithName("baka");
+            globalCommandUser.WithDescription("Shows information about the bot.");
+            globalCommandUser.AddOption("user", ApplicationCommandOptionType.User, "Choose a user.", isRequired: true);
+
+            SlashCommandBuilder guildCommandUser = new SlashCommandBuilder();
+            guildCommandUser.WithName("user-guild");
+            guildCommandUser.WithDescription("GUILD Shows information about the bot.");
+            guildCommandUser.AddOption("user", ApplicationCommandOptionType.User, "Choose a user.", isRequired: true);
+
+            try
+            {
+                // Now that we have our builder, we can call the CreateApplicationCommandAsync method to make our slash command.
+                await guild.CreateApplicationCommandAsync(guildCommandUser.Build());
+
+                // With global commands we don't need the guild.
+                await _client.CreateGlobalApplicationCommandAsync(globalCommandUser.Build());
+                // Using the ready event is a simple implementation for the sake of the example. Suitable for testing and development.
+                // For a production bot, it is recommended to only run the CreateGlobalApplicationCommandAsync() once for each command.
+            }
+            catch (ApplicationCommandException exception)
+            {
+                // If our command was invalid, we should catch an ApplicationCommandException. This exception contains the path of the error as well as the error message. You can serialize the Error field in the exception to get a visual of where your error is.
+                var json = JsonConvert.SerializeObject(exception.Message, Formatting.Indented);
+
+                // You can send this error somewhere or just print it to the console, for this example we're just going to print it.
+                Console.WriteLine(json);
+            }
+            /*await _client.BulkOverwriteGlobalApplicationCommandsAsync(applicationCommandProperties.ToArray());
+        }
+        catch (ApplicationCommandException exception)
+        {
+            var json = JsonConvert.SerializeObject(exception.Message, Formatting.Indented);
+            Console.WriteLine(json);
+        }*/
         }
 
         static bool IsDebug()
