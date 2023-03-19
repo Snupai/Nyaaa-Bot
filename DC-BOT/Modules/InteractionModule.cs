@@ -23,11 +23,11 @@ namespace DNet_V3_Tutorial
         string apiKey = Environment.GetEnvironmentVariable("apiKey");
 
         public InteractionService Commands { get; set; }
-        private static Logger _logger;
+        private static ILogger _logger;
 
         private readonly ulong roleID = 735934868260913498;
 
-        public InteractionModule(ConsoleLogger logger)
+        public InteractionModule(ILogger logger)
         {
             _logger = logger;
         }
