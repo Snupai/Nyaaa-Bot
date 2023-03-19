@@ -11,6 +11,8 @@ namespace DC_BOT.Commands
         private readonly ILogger _logger;
         private string apiKey = Environment.GetEnvironmentVariable("apiKey");
 
+        public bool IsGuildCommand => true;
+
         public BakaCommandHandler(ILogger logger)
         {
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));

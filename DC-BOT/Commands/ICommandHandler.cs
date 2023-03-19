@@ -7,6 +7,8 @@ namespace DC_BOT.Commands
     {
         SlashCommandProperties Initialize();
 
+        bool IsGuildCommand { get; }
+
         Task HandleAsync(SocketSlashCommand command);
     }
 }

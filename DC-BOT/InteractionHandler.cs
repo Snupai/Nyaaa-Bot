@@ -41,7 +41,6 @@ namespace DNet_V3_Tutorial
             _commands.SlashCommandExecuted += SlashCommandExecuted;
             _commands.ContextCommandExecuted += ContextCommandExecuted;
             _commands.ComponentCommandExecuted += ComponentCommandExecuted;
-            _client.SlashCommandExecuted += SlashCommandHandler;
         }
 
         private Task ComponentCommandExecuted(ComponentCommandInfo arg1, Discord.IInteractionContext arg2, IResult arg3)
@@ -76,20 +75,6 @@ namespace DNet_V3_Tutorial
                 if (arg.Type == InteractionType.ApplicationCommand)
                     await arg.GetOriginalResponseAsync().ContinueWith(async (msg) => await msg.Result.DeleteAsync());
             }
-        }
-        private async Task SlashCommandHandler(SocketSlashCommand command)
-        {
-            switch (command.Data.Name)
-            {
-                case "baka":
-                    await HandleListRoleCommand(command);
-                    break;
-            }
-        }
-
-        private async Task HandleListRoleCommand(SocketSlashCommand command)
-        {
-            
         }
     }
 }
