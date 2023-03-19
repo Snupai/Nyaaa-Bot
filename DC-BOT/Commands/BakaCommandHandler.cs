@@ -83,11 +83,11 @@ namespace DC_BOT.Commands
 
         public SlashCommandProperties Initialize()
         {
-            SlashCommandBuilder globalCommandUser = new SlashCommandBuilder();
-            globalCommandUser.WithName("baka");
-            globalCommandUser.WithDescription("Shows information about the bot.");
-            globalCommandUser.AddOption("user", ApplicationCommandOptionType.User, "Choose a user.", isRequired: true);
-            return globalCommandUser.Build();
+            SlashCommandBuilder globalCommandBaka = new SlashCommandBuilder();
+            globalCommandBaka.WithName("baka");
+            globalCommandBaka.WithDescription("Shows information about the bot.");
+            globalCommandBaka.AddOption("user", ApplicationCommandOptionType.User, "Choose a user.", isRequired: true);
+            return globalCommandBaka.Build();
         }
     }
 }

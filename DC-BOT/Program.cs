@@ -46,6 +46,7 @@ namespace DNet_V3_Tutorial
                     }))
                     // Adding console logging
                     .AddTransient<ConsoleLogger>()
+                    .AddTransient<ILogger, ConsoleLogger>()
                     // Used for slash commands and their registration with Discord
                     .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
                     // Required to subscribe to the various client events used in conjunction with Interactions

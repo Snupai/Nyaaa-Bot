@@ -38,12 +38,13 @@ namespace DNet_V3_Tutorial
         [SlashCommand("ping", "Receive a pong!")]
         public async Task Ping()
         {
+            await RespondAsync("pong! Latency: pinging...");
             // New LogMessage created to pass desired info to the console using the existing Discord.Net LogMessage parameters
             await _logger.Log(new LogMessage(LogSeverity.Info, "InteractionModule : Ping", $"User: {Context.User.Username}, Command: ping", null));
             // Get the current latency
             var latency = Context.Client.Latency;
             // Respond to the user with the latency
-            await RespondAsync($"pong! Latency: {latency.ToString()}ms");
+            await ModifyOriginalResponseAsync(x => x.Content = $"pong! Latency: {latency.ToString()}ms");
         }
 
         //-------------------------------------------------------------------------------------------------------------------
@@ -100,7 +101,8 @@ namespace DNet_V3_Tutorial
         public async Task sfwReactBakaGifMessageCommand(IMessage message)
         {
             var author = Convert.ToString(message.Author.Username);
-            await sfwReactBakaGif(author);
+            if (!message.Author.IsBot) await sfwReactBakaGif(author);
+            else await RespondAsync("Try a user instead of a Bot.", ephemeral: true);
         }
 
         //-------------------------------------------------------------------------------------------------------------------
@@ -133,7 +135,7 @@ namespace DNet_V3_Tutorial
                 }
                 else
                 {
-                    await RespondAsync($"Please specify if you want an image or gif.\nUsage: `/neko [img/gif/neko-boy]`", ephemeral: true);
+                    await RespondAsync($"Please specify what you want.\nUsage: `/neko [img/gif/neko-boy]`", ephemeral: true);
                     return;
                 }
 
@@ -194,12 +196,13 @@ namespace DNet_V3_Tutorial
         [SlashCommand("nekopara", "Receive a sfw nekopara image!")]
         public async Task sfwNekoparaImg()
         {
+            await RespondAsync("Trying to get a gif...");
             try
             {
                 string result;
                 var url = "https://gallery.fluxpoint.dev/api/sfw/img/nekopara";
 
-                await RespondAsync("Trying to get a gif...");
+                
                 var httpRequest = (HttpWebRequest)WebRequest.Create(url);
                 httpRequest.Headers["Authorization"] = apiKey;
 
@@ -217,7 +220,7 @@ namespace DNet_V3_Tutorial
             catch (Exception e)
             {
                 await _logger.Log(new LogMessage(LogSeverity.Info, "InteractionModule : sfwNekoparaImg", $"Bad request, Command: nekopara", null)); //WriteLine($"Error: {e.Message}");
-                await RespondAsync($"Oops something went wrong.\nPlease try again later.", ephemeral: true);
+                await ModifyOriginalResponseAsync(x => x.Content = $"Oops something went wrong.\nPlease try again later.");
                 throw;
             }
         }
@@ -596,7 +599,7 @@ namespace DNet_V3_Tutorial
             await RespondAsync(input);
         }
 
-        [UserCommand("give-role")]
+        [UserCommand("give-role Member")]
         public async Task HandleUserCommand(IUser user)
         {
             await (user as SocketGuildUser).AddRoleAsync(roleID);
