@@ -13,7 +13,7 @@ namespace DNet_V3_Tutorial
         string apiKey = Environment.GetEnvironmentVariable("apiKey");
 
         public InteractionService Commands { get; set; }
-        private static Logger _logger;
+        private static ILogger _logger;
 
         
         private readonly DiscordSocketClient _client;
@@ -21,7 +21,7 @@ namespace DNet_V3_Tutorial
         private readonly IServiceProvider _services;
 
         // Using constructor injection
-        public InteractionHandler(DiscordSocketClient client, InteractionService commands, IServiceProvider services, ConsoleLogger logger)
+        public InteractionHandler(DiscordSocketClient client, InteractionService commands, IServiceProvider services, ILogger logger)
         {
             _client = client;
             _commands = commands;
