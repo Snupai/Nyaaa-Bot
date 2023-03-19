@@ -26,7 +26,7 @@ namespace DNet_V3_Tutorial
 
             // Process the InteractionCreated payloads to execute Interactions commands
             _client.InteractionCreated += HandleInteraction;
-
+            
             // Process the command execution results 
             _commands.SlashCommandExecuted += SlashCommandExecuted;
             _commands.ContextCommandExecuted += ContextCommandExecuted;
@@ -35,6 +35,7 @@ namespace DNet_V3_Tutorial
 
         private Task ComponentCommandExecuted(ComponentCommandInfo arg1, Discord.IInteractionContext arg2, IResult arg3)
         {
+            
             return Task.CompletedTask;
         }
 
@@ -44,7 +45,7 @@ namespace DNet_V3_Tutorial
         }
 
         private Task SlashCommandExecuted(SlashCommandInfo arg1, Discord.IInteractionContext arg2, IResult arg3)
-        {
+        {   
             return Task.CompletedTask;
         }
         private async Task HandleInteraction(SocketInteraction arg)

@@ -7,16 +7,21 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration.Yaml;
 using Discord.Commands;
 using Discord;
+using YamlDotNet.Core.Tokens;
+using Discord.Net;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
 
 namespace DNet_V3_Tutorial
 {
     public class program
     {
-        private DiscordSocketClient _client;        
-        
+        private DiscordSocketClient _client;
+
         // Program entry point
         public static Task Main(string[] args) => new program().MainAsync();
-
 
         public async Task MainAsync()
         {
@@ -27,7 +32,8 @@ namespace DNet_V3_Tutorial
             // I chose using YML files for my config data as I am familiar with them
             .AddYamlFile("config.yml")
             .Build();
-            
+            Environment.SetEnvironmentVariable("apiKey", config["tokens:fluxpoint-api"]);
+            Environment.SetEnvironmentVariable("guildId", config["testGuild"]);
             using IHost host = Host.CreateDefaultBuilder()
                 .ConfigureServices((_, services) =>
             services
@@ -41,7 +47,7 @@ namespace DNet_V3_Tutorial
                 AlwaysDownloadUsers = true,
                 LogLevel = LogSeverity.Debug
             }))
-			// Adding console logging
+            // Adding console logging
             .AddTransient<ConsoleLogger>()
             // Used for slash commands and their registration with Discord
             .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
@@ -53,7 +59,6 @@ namespace DNet_V3_Tutorial
                 LogLevel = LogSeverity.Debug,
                 DefaultRunMode = Discord.Commands.RunMode.Async
             }))
-            // Adding the prefix command handler
             .AddSingleton<PrefixHandler>())
             .Build();
 
@@ -70,11 +75,6 @@ namespace DNet_V3_Tutorial
             var config = provider.GetRequiredService<IConfigurationRoot>();
 
             await provider.GetRequiredService<InteractionHandler>().InitializeAsync();
-
-            var prefixCommands = provider.GetRequiredService<PrefixHandler>();
-            // prefixCommands.AddModule<DNet_V3_Bot.Modules.PrefixModule>();
-            // await prefixCommands.InitializeAsync();
-
 
             // Subscribe to client log events
             _client.Log += _ => provider.GetRequiredService<ConsoleLogger>().Log(_);
