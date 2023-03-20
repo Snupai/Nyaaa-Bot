@@ -42,6 +42,7 @@ namespace DNet_V3_Tutorial
                         GatewayIntents = Discord.GatewayIntents.AllUnprivileged,
                         LogGatewayIntentWarnings = false,
                         AlwaysDownloadUsers = true,
+                        UseInteractionSnowflakeDate = false,
                         LogLevel = LogSeverity.Debug
                     }))
                     // Adding console logging
@@ -59,6 +60,21 @@ namespace DNet_V3_Tutorial
                     }))
                     // Add new command handlers here
                     .AddSingleton<ICommandHandler, BakaCommandHandler>()
+                    .AddSingleton<ICommandHandler, BiteCommandHandler>()
+                    .AddSingleton<ICommandHandler, BlushCommandHandler>()
+                    .AddSingleton<ICommandHandler, CryCommandHandler>()
+                    .AddSingleton<ICommandHandler, DanceCommandHandler>()
+                    .AddSingleton<ICommandHandler, FeedCommandHandler>()
+                    .AddSingleton<ICommandHandler, FluffCommandHandler>()
+                    .AddSingleton<ICommandHandler, GrabCheeksCommandHandler>()
+                    .AddSingleton<ICommandHandler, HandHoldCommandHandler>()
+                    .AddSingleton<ICommandHandler, HighfiveCommandHandler>()
+                    .AddSingleton<ICommandHandler, HugCommandHandler>()
+                    .AddSingleton<ICommandHandler, KissCommandHandler>()
+                    .AddSingleton<ICommandHandler, LickCommandHandler>()
+                    .AddSingleton<ICommandHandler, PatCommandHandler>()
+                    .AddSingleton<ICommandHandler, PokeCommandHandler>()
+                    .AddSingleton<ICommandHandler, PunchCommandHandler>()
                 )
                 .Build();
 
@@ -84,7 +100,7 @@ namespace DNet_V3_Tutorial
             // Subscribe to slash command log events
             commands.Log += _ => provider.GetRequiredService<ConsoleLogger>().Log(_);
 
-            _client.Ready += Client_Ready;
+            //_client.Ready += Client_Ready;
 
             _client.Ready += async () =>
             {
@@ -103,7 +119,7 @@ namespace DNet_V3_Tutorial
 
             await Task.Delay(-1);
         }
-        internal async Task Client_Ready()
+        /*internal async Task Client_Ready()
         {
             List<ApplicationCommandProperties> applicationCommandProperties = new();
             var guildId = Environment.GetEnvironmentVariable("guildId");
@@ -135,14 +151,14 @@ namespace DNet_V3_Tutorial
                 // You can send this error somewhere or just print it to the console, for this example we're just going to print it.
                 Console.WriteLine(json);
             }
-            /*await _client.BulkOverwriteGlobalApplicationCommandsAsync(applicationCommandProperties.ToArray());
+            await _client.BulkOverwriteGlobalApplicationCommandsAsync(applicationCommandProperties.ToArray());
         }
         catch (ApplicationCommandException exception)
         {
             var json = JsonConvert.SerializeObject(exception.Message, Formatting.Indented);
             Console.WriteLine(json);
-        }*/
         }
+        }*/
 
         static bool IsDebug()
         {

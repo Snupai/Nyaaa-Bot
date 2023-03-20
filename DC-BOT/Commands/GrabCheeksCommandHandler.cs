@@ -6,14 +6,14 @@ using System.Net;
 
 namespace DC_BOT.Commands
 {
-    internal class BakaCommandHandler : ICommandHandler
+    internal class GrabCheeksCommandHandler : ICommandHandler
     {
         private readonly ILogger _logger;
         private string apiKey = Environment.GetEnvironmentVariable("apiKey");
 
         public bool IsGuildCommand => true;
 
-        public BakaCommandHandler(ILogger logger)
+        public GrabCheeksCommandHandler(ILogger logger)
         {
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -23,17 +23,18 @@ namespace DC_BOT.Commands
             try
             {
                 string result;
-                var url = "https://gallery.fluxpoint.dev/api/sfw/gif/baka";
+                var url = "https://gallery.fluxpoint.dev/api/sfw/gif/grab";
                 var userName = command.User.Username;
                 var thisUser = (SocketGuildUser)command.Data.Options.First().Value;
                 var mentionedUser = thisUser.Username;
                 if (userName == mentionedUser)
                 {
-                    await command.RespondAsync("Don't call yourself an idiot.", ephemeral: true);
+                    await command.RespondAsync("You can't grab your own cheeks.", ephemeral: true);
                     return;
                 }
-                if (thisUser.IsBot) {
-                    await command.RespondAsync("Try with a human not a bot.", ephemeral: true);
+                if (thisUser.IsBot)
+                {
+                    await command.RespondAsync("You can't grab the cheeks of a bot.", ephemeral: true);
                     return;
                 }
 
@@ -53,7 +54,7 @@ namespace DC_BOT.Commands
 
 
                 EmbedBuilder builder = new EmbedBuilder();
-                builder.Description = $"**{userName}** calls **{mentionedUser}** an idiot";
+                builder.Description = $"**{userName}** grabs **{mentionedUser}** cheeks";
                 builder.ImageUrl = file;
                 builder.Timestamp = DateTime.Now;
 
@@ -63,7 +64,7 @@ namespace DC_BOT.Commands
             }
             catch (Exception e)
             {
-                await this._logger.Log(new LogMessage(LogSeverity.Info, "CommandHandler : BakaCommandHandler", $"Bad request {e.Message}, Command: baka", null)); //WriteLine($"Error: {e.Message}");
+                await this._logger.Log(new LogMessage(LogSeverity.Info, "CommandHandler : GrabCheeksCommandHandler", $"Bad request {e.Message}, Command: grab cheeks", null)); //WriteLine($"Error: {e.Message}");
                 await command.RespondAsync($"Oops something went wrong.\nPlease try again later.", ephemeral: true);
                 throw;
             }
@@ -71,11 +72,11 @@ namespace DC_BOT.Commands
 
         public SlashCommandProperties Initialize()
         {
-            SlashCommandBuilder globalCommandBaka = new SlashCommandBuilder();
-            globalCommandBaka.WithName("baka");
-            globalCommandBaka.WithDescription("Call someone a baka.");
-            globalCommandBaka.AddOption("user", ApplicationCommandOptionType.User, "Choose a user.", isRequired: true);
-            return globalCommandBaka.Build();
+            SlashCommandBuilder globalCommandGrab = new SlashCommandBuilder();
+            globalCommandGrab.WithName("grab-cheeks");
+            globalCommandGrab.WithDescription("Grab someones cheeks.");
+            globalCommandGrab.AddOption("user", ApplicationCommandOptionType.User, "Choose a user.", isRequired: true);
+            return globalCommandGrab.Build();
         }
     }
 }

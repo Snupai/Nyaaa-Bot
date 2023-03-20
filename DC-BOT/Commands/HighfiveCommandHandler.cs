@@ -6,14 +6,14 @@ using System.Net;
 
 namespace DC_BOT.Commands
 {
-    internal class BakaCommandHandler : ICommandHandler
+    internal class HighfiveCommandHandler : ICommandHandler
     {
         private readonly ILogger _logger;
         private string apiKey = Environment.GetEnvironmentVariable("apiKey");
 
         public bool IsGuildCommand => true;
 
-        public BakaCommandHandler(ILogger logger)
+        public HighfiveCommandHandler(ILogger logger)
         {
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -23,17 +23,18 @@ namespace DC_BOT.Commands
             try
             {
                 string result;
-                var url = "https://gallery.fluxpoint.dev/api/sfw/gif/baka";
+                var url = "https://gallery.fluxpoint.dev/api/sfw/gif/highfive";
                 var userName = command.User.Username;
                 var thisUser = (SocketGuildUser)command.Data.Options.First().Value;
                 var mentionedUser = thisUser.Username;
                 if (userName == mentionedUser)
                 {
-                    await command.RespondAsync("Don't call yourself an idiot.", ephemeral: true);
+                    await command.RespondAsync("You can't give yourself a highfive.", ephemeral: true);
                     return;
                 }
-                if (thisUser.IsBot) {
-                    await command.RespondAsync("Try with a human not a bot.", ephemeral: true);
+                if (thisUser.IsBot)
+                {
+                    await command.RespondAsync("You can't highfive with a bot.", ephemeral: true);
                     return;
                 }
 
@@ -53,7 +54,7 @@ namespace DC_BOT.Commands
 
 
                 EmbedBuilder builder = new EmbedBuilder();
-                builder.Description = $"**{userName}** calls **{mentionedUser}** an idiot";
+                builder.Description = $"**{userName}** gives **{mentionedUser}** a highfive";
                 builder.ImageUrl = file;
                 builder.Timestamp = DateTime.Now;
 
@@ -63,7 +64,7 @@ namespace DC_BOT.Commands
             }
             catch (Exception e)
             {
-                await this._logger.Log(new LogMessage(LogSeverity.Info, "CommandHandler : BakaCommandHandler", $"Bad request {e.Message}, Command: baka", null)); //WriteLine($"Error: {e.Message}");
+                await this._logger.Log(new LogMessage(LogSeverity.Info, "CommandHandler : HighfiveCommandHandler", $"Bad request {e.Message}, Command: highfive", null)); //WriteLine($"Error: {e.Message}");
                 await command.RespondAsync($"Oops something went wrong.\nPlease try again later.", ephemeral: true);
                 throw;
             }
@@ -71,11 +72,11 @@ namespace DC_BOT.Commands
 
         public SlashCommandProperties Initialize()
         {
-            SlashCommandBuilder globalCommandBaka = new SlashCommandBuilder();
-            globalCommandBaka.WithName("baka");
-            globalCommandBaka.WithDescription("Call someone a baka.");
-            globalCommandBaka.AddOption("user", ApplicationCommandOptionType.User, "Choose a user.", isRequired: true);
-            return globalCommandBaka.Build();
+            SlashCommandBuilder globalCommandHighfive = new SlashCommandBuilder();
+            globalCommandHighfive.WithName("highfive");
+            globalCommandHighfive.WithDescription("Highfive with someone.");
+            globalCommandHighfive.AddOption("user", ApplicationCommandOptionType.User, "Choose a user.", isRequired: true);
+            return globalCommandHighfive.Build();
         }
     }
 }

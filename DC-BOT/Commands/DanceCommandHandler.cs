@@ -6,14 +6,14 @@ using System.Net;
 
 namespace DC_BOT.Commands
 {
-    internal class BakaCommandHandler : ICommandHandler
+    internal class DanceCommandHandler : ICommandHandler
     {
         private readonly ILogger _logger;
         private string apiKey = Environment.GetEnvironmentVariable("apiKey");
 
         public bool IsGuildCommand => true;
 
-        public BakaCommandHandler(ILogger logger)
+        public DanceCommandHandler(ILogger logger)
         {
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -23,19 +23,20 @@ namespace DC_BOT.Commands
             try
             {
                 string result;
-                var url = "https://gallery.fluxpoint.dev/api/sfw/gif/baka";
+                var url = "https://gallery.fluxpoint.dev/api/sfw/gif/dance";
                 var userName = command.User.Username;
-                var thisUser = (SocketGuildUser)command.Data.Options.First().Value;
+                /*var thisUser = (SocketGuildUser)command.Data.Options.First().Value;
                 var mentionedUser = thisUser.Username;
                 if (userName == mentionedUser)
                 {
-                    await command.RespondAsync("Don't call yourself an idiot.", ephemeral: true);
+                    await command.RespondAsync("Don't bite yourself.", ephemeral: true);
                     return;
                 }
-                if (thisUser.IsBot) {
+                if (thisUser.IsBot)
+                {
                     await command.RespondAsync("Try with a human not a bot.", ephemeral: true);
                     return;
-                }
+                }*/
 
                 await command.RespondAsync("Trying to get a gif...");
                 var httpRequest = (HttpWebRequest)WebRequest.Create(url);
@@ -53,7 +54,7 @@ namespace DC_BOT.Commands
 
 
                 EmbedBuilder builder = new EmbedBuilder();
-                builder.Description = $"**{userName}** calls **{mentionedUser}** an idiot";
+                builder.Description = $"**{userName}** is dancing";
                 builder.ImageUrl = file;
                 builder.Timestamp = DateTime.Now;
 
@@ -63,7 +64,7 @@ namespace DC_BOT.Commands
             }
             catch (Exception e)
             {
-                await this._logger.Log(new LogMessage(LogSeverity.Info, "CommandHandler : BakaCommandHandler", $"Bad request {e.Message}, Command: baka", null)); //WriteLine($"Error: {e.Message}");
+                await this._logger.Log(new LogMessage(LogSeverity.Info, "CommandHandler : DanceCommandHandler", $"Bad request {e.Message}, Command: dance", null)); //WriteLine($"Error: {e.Message}");
                 await command.RespondAsync($"Oops something went wrong.\nPlease try again later.", ephemeral: true);
                 throw;
             }
@@ -71,11 +72,11 @@ namespace DC_BOT.Commands
 
         public SlashCommandProperties Initialize()
         {
-            SlashCommandBuilder globalCommandBaka = new SlashCommandBuilder();
-            globalCommandBaka.WithName("baka");
-            globalCommandBaka.WithDescription("Call someone a baka.");
-            globalCommandBaka.AddOption("user", ApplicationCommandOptionType.User, "Choose a user.", isRequired: true);
-            return globalCommandBaka.Build();
+            SlashCommandBuilder globalCommandDance = new SlashCommandBuilder();
+            globalCommandDance.WithName("dance");
+            globalCommandDance.WithDescription("Just dance.");
+            //globalCommandDance.AddOption("user", ApplicationCommandOptionType.User, "Choose a user.", isRequired: true);
+            return globalCommandDance.Build();
         }
     }
 }
