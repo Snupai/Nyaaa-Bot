@@ -9,8 +9,13 @@ namespace DC_BOT.Commands
 {
     internal class CommandStartup
     {
+        private const bool ShouldDelete = false;
+
         private readonly DiscordSocketClient client;
         private readonly IEnumerable<ICommandHandler> commandHandlers;
+
+        private List<SlashCommandProperties> globalSlashCommands = new List<SlashCommandProperties>();
+        private List<SlashCommandProperties> guildSlashCommands = new List<SlashCommandProperties>();
 
         public CommandStartup(DiscordSocketClient client, IHost host)
         {
@@ -25,10 +30,6 @@ namespace DC_BOT.Commands
 
         internal async Task Start() 
         {
-            var globalSlashCommands = new List<SlashCommandProperties>();
-            var guildSlashCommands = new List<SlashCommandProperties>();
-
-
             foreach (var commandHandler in this.commandHandlers)
             {
                 var commandProperties = commandHandler.Initialize();
@@ -54,39 +55,94 @@ namespace DC_BOT.Commands
                     globalSlashCommands.Add(commandProperties);
                 }
             }
-
-            await this.MigrateCommands(globalSlashCommands, guildSlashCommands);
         }
 
-        private async Task MigrateCommands(List<SlashCommandProperties> desiredGlobalCommands, List<SlashCommandProperties> desiredGuildCommands) 
-        {
-            Console.WriteLine("Do you want to migrate commands? If so type 'yes'");
-            var response = Console.ReadLine();
+        internal async Task MigrateGuildCommands() {
+            var guildId = Environment.GetEnvironmentVariable("guildId");
+            Console.WriteLine($"[Command Migration] Starting guild command migration for '{guildId}'");
 
-            if (response != "yes") return;
-
-            Console.WriteLine("[Command Migration] Starting migration");
             var clientAppInfo = await client.GetApplicationInfoAsync();
 
-            var globalCommands = await client.GetGlobalApplicationCommandsAsync();
-            foreach (SocketApplicationCommand globalCommand in globalCommands)
+            var guild = this.client.GetGuild(UInt64.Parse(guildId));
+
+            var guildCommands = await guild.GetApplicationCommandsAsync();
+
+            if (ShouldDelete)
             {
-                if (globalCommand.Type != ApplicationCommandType.Slash)
+                foreach (SocketApplicationCommand guildCommand in guildCommands)
                 {
-                    Console.WriteLine($"[Command Migration] Skipping command '{globalCommand.Name}' because it isn't a slash command");
+                    if (guildCommand.Type != ApplicationCommandType.Slash)
+                    {
+                        Console.WriteLine($"[Command Migration] Skipping guild command '{guildCommand.Name}' for guild {guildId} because it isn't a slash command");
+                    }
+
+                    if (guildCommand.ApplicationId != clientAppInfo.Id)
+                    {
+                        Console.WriteLine($"[Command Migration] Skipping guild command '{guildCommand.Name}' for guild {guildId} because it belongs to a different application");
+                        continue;
+                    }
+
+                    Console.WriteLine($"[Command Migration] Deleting command '{guildCommand.Name}' for guild {guildId}");
+
+                    await guildCommand.DeleteAsync();
                 }
+            }            
 
-                if (globalCommand.ApplicationId != clientAppInfo.Id) {
-                    Console.WriteLine($"[Command Migration] Skipping command '{globalCommand.Name}' because it belongs to a different application");
-                    continue;
+            foreach (var desiredGuildCommand in guildSlashCommands)
+            {
+                try
+                {
+                    Console.WriteLine($"[Command Migration] Creating command '{desiredGuildCommand.Name}' for guild {guildId}");
+                    await guild.CreateApplicationCommandAsync(desiredGuildCommand);
                 }
+                catch (HttpException exception)
+                {
+                    // If our command was invalid, we should catch an ApplicationCommandException. This exception contains the path of the error as well as the error message. You can serialize the Error field in the exception to get a visual of where your error is.
+                    var json = JsonConvert.SerializeObject(exception.Message, Formatting.Indented);
 
-                Console.WriteLine($"[Command Migration] Deleting command '{globalCommand.Name}'");
+                    // You can send this error somewhere or just print it to the console, for this example we're just going to print it.
+                    Console.WriteLine(json);
+                }
+            }
+        }
 
-                await globalCommand.DeleteAsync();                
+        internal async Task MigrateCommands() 
+        {
+            Console.WriteLine("[Command Migration] Starting migration");
+
+            IReadOnlyCollection<SocketApplicationCommand> globalCommands;
+
+            try
+            {
+                globalCommands = await client.GetGlobalApplicationCommandsAsync();
+            }
+            catch {
+                return;
+            }
+            if (globalCommands == null || !globalCommands.Any()) return;
+
+            var clientAppInfo = await client.GetApplicationInfoAsync();
+            if (ShouldDelete) 
+            {
+                foreach (SocketApplicationCommand globalCommand in globalCommands)
+                {
+                    if (globalCommand.Type != ApplicationCommandType.Slash)
+                    {
+                        Console.WriteLine($"[Command Migration] Skipping command '{globalCommand.Name}' because it isn't a slash command");
+                    }
+
+                    if (globalCommand.ApplicationId != clientAppInfo.Id) {
+                        Console.WriteLine($"[Command Migration] Skipping command '{globalCommand.Name}' because it belongs to a different application");
+                        continue;
+                    }
+
+                    Console.WriteLine($"[Command Migration] Deleting command '{globalCommand.Name}'");
+
+                    await globalCommand.DeleteAsync();                
+                }
             }
 
-            foreach (var desiredGlobalCommand in desiredGlobalCommands)
+            foreach (var desiredGlobalCommand in globalSlashCommands)
             {
                 try
                 {
@@ -102,49 +158,6 @@ namespace DC_BOT.Commands
                     Console.WriteLine(json);
                 }
             }
-
-            client.Ready += async () =>
-            {
-                var guildId = Environment.GetEnvironmentVariable("guildId");
-                var guild = this.client.GetGuild(UInt64.Parse(guildId));
-
-                var guildCommands = await guild.GetApplicationCommandsAsync();
-
-                foreach (SocketApplicationCommand guildCommand in guildCommands)
-                {
-                    if (guildCommand.Type != ApplicationCommandType.Slash)
-                    {
-                        Console.WriteLine($"[Command Migration] Skipping guild command '{guildCommand.Name}' for guild {guildId} because it isn't a slash command");
-                    }
-
-                    if (guildCommand.Id != clientAppInfo.Id)
-                    {
-                        Console.WriteLine($"[Command Migration] Skipping guild command '{guildCommand.Name}' for guild {guildId} because it belongs to a different application");
-                        continue;
-                    }
-
-                    Console.WriteLine($"[Command Migration] Deleting command '{guildCommand.Name}' for guild {guildId}");
-
-                    await guildCommand.DeleteAsync();
-                }
-
-                foreach (var desiredGuildCommand in desiredGuildCommands)
-                {
-                    try
-                    {
-                        Console.WriteLine($"[Command Migration] Creating command '{desiredGuildCommand.Name}' for guild {guildId}");
-                        await guild.CreateApplicationCommandAsync(desiredGuildCommand);
-                    }
-                    catch (HttpException exception)
-                    {
-                        // If our command was invalid, we should catch an ApplicationCommandException. This exception contains the path of the error as well as the error message. You can serialize the Error field in the exception to get a visual of where your error is.
-                        var json = JsonConvert.SerializeObject(exception.Message, Formatting.Indented);
-
-                        // You can send this error somewhere or just print it to the console, for this example we're just going to print it.
-                        Console.WriteLine(json);
-                    }
-                }
-            };
         }
     }
 }

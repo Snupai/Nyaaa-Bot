@@ -46,7 +46,6 @@ namespace DNet_V3_Tutorial
                         LogLevel = LogSeverity.Debug
                     }))
                     // Adding console logging
-                    .AddTransient<ConsoleLogger>()
                     .AddTransient<ILogger, ConsoleLogger>()
                     // Used for slash commands and their registration with Discord
                     .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
@@ -75,6 +74,8 @@ namespace DNet_V3_Tutorial
                     .AddSingleton<ICommandHandler, PatCommandHandler>()
                     .AddSingleton<ICommandHandler, PokeCommandHandler>()
                     .AddSingleton<ICommandHandler, PunchCommandHandler>()
+                    .AddSingleton<ICommandHandler, ZeroTwoCommandHandler>()
+                    .AddSingleton<ICommandHandler, PingCommandHandler>()
                 )
                 .Build();
 
@@ -93,11 +94,12 @@ namespace DNet_V3_Tutorial
 
             await provider.GetRequiredService<InteractionHandler>().InitializeAsync();
 
-            
+            var logger = provider.GetRequiredService<ILogger>();
+
             // Subscribe to client log events
-            _client.Log += _ => provider.GetRequiredService<ConsoleLogger>().Log(_);
+            _client.Log += _ => logger.Log(_);
             // Subscribe to slash command log events
-            commands.Log += _ => provider.GetRequiredService<ConsoleLogger>().Log(_);
+            commands.Log += _ => logger.Log(_);
 
             //_client.Ready += Client_Ready;
 
@@ -112,58 +114,29 @@ namespace DNet_V3_Tutorial
                     await commands.RegisterCommandsGloballyAsync(true);
             };
 
+            var commandStartup = new CommandStartup(_client, host);
+
+            Console.WriteLine("Do you want to migrate commands? If so type 'yes'");
+
+            var response = Console.ReadLine();
+            bool migrate = response == "yes";
+
+            if (migrate) {
+                _client.Ready += commandStartup.MigrateGuildCommands;
+            }
 
             await _client.LoginAsync(Discord.TokenType.Bot, config["tokens:discord"]);
             await _client.StartAsync();
+            await commandStartup.Start();
+
+            if (migrate) {
+                await commandStartup.MigrateCommands();
+            }
 
             await _client.SetStatusAsync(UserStatus.Idle);
 
-            var commandStartup = new CommandStartup(_client, host);
-            await commandStartup.Start();
-
-
             await Task.Delay(-1);
         }
-        /*internal async Task Client_Ready()
-        {
-            List<ApplicationCommandProperties> applicationCommandProperties = new();
-            var guildId = Environment.GetEnvironmentVariable("guildId");
-            var guild = _client.GetGuild(UInt64.Parse(guildId));
-            // Simple help slash command.
-            SlashCommandBuilder globalCommandHelp = new SlashCommandBuilder();
-            globalCommandHelp.WithName("help");
-            globalCommandHelp.WithDescription("Shows information about the bot.");
-            applicationCommandProperties.Add(globalCommandHelp.Build());
-
-            SlashCommandBuilder guildCommandUser = new SlashCommandBuilder();
-            guildCommandUser.WithName("user-guild");
-            guildCommandUser.WithDescription("GUILD Shows information about the bot.");
-            guildCommandUser.AddOption("user", ApplicationCommandOptionType.User, "Choose a user.", isRequired: true);
-
-            try
-            {
-                // Now that we have our builder, we can call the CreateApplicationCommandAsync method to make our slash command.
-                await guild.CreateApplicationCommandAsync(guildCommandUser.Build());
-
-                // Using the ready event is a simple implementation for the sake of the example. Suitable for testing and development.
-                // For a production bot, it is recommended to only run the CreateGlobalApplicationCommandAsync() once for each command.
-            }
-            catch (ApplicationCommandException exception)
-            {
-                // If our command was invalid, we should catch an ApplicationCommandException. This exception contains the path of the error as well as the error message. You can serialize the Error field in the exception to get a visual of where your error is.
-                var json = JsonConvert.SerializeObject(exception.Message, Formatting.Indented);
-
-                // You can send this error somewhere or just print it to the console, for this example we're just going to print it.
-                Console.WriteLine(json);
-            }
-            await _client.BulkOverwriteGlobalApplicationCommandsAsync(applicationCommandProperties.ToArray());
-        }
-        catch (ApplicationCommandException exception)
-        {
-            var json = JsonConvert.SerializeObject(exception.Message, Formatting.Indented);
-            Console.WriteLine(json);
-        }
-        }*/
 
         static bool IsDebug()
         {
