@@ -9,7 +9,7 @@ namespace DC_BOT.Commands
 {
     internal class CommandStartup
     {
-        private const bool ShouldDelete = false;
+        public static bool ShouldDelete = true;
 
         private readonly DiscordSocketClient client;
         private readonly IEnumerable<ICommandHandler> commandHandlers;

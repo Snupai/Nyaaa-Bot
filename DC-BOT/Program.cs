@@ -122,6 +122,13 @@ namespace DNet_V3_Tutorial
             bool migrate = response == "yes";
 
             if (migrate) {
+                Console.WriteLine("Do you also want to delete old commands? If so type 'yes'");
+                var shouldDelete = Console.ReadLine() == "yes";
+
+                CommandStartup.ShouldDelete = shouldDelete;
+            }
+
+            if (migrate) {
                 _client.Ready += commandStartup.MigrateGuildCommands;
             }
 

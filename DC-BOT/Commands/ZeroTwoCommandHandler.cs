@@ -24,7 +24,6 @@ namespace DC_BOT.Commands
         {
             await command.DeferAsync();
 
-
             using (HttpClient client = new HttpClient()) {
                 var r = new Random();
 
@@ -53,7 +52,6 @@ namespace DC_BOT.Commands
                 await command.ModifyOriginalResponseAsync(x => x.Content = "\u200D");
                 await command.ModifyOriginalResponseAsync(x => x.Embed = builder.Build());
             }
-
         }
 
         public SlashCommandProperties Initialize()

@@ -26,52 +26,6 @@ namespace DNet_V3_Tutorial
         // Here starts reactions responses
         //-------------------------------------------------------------------------------------------------------------------
 
-        //[SlashCommand("baka", "Say baka to someone!")]
-        public async Task sfwReactBakaGif(string guildUser = "")
-        {
-            try
-            {
-                string result;
-                var url = "https://gallery.fluxpoint.dev/api/sfw/gif/baka";
-                var userName = Context.User.Username;
-                //var guildUser = "";      
-                if (userName == guildUser)
-                {
-                    await RespondAsync("Don't call yourself an idiot.", ephemeral: true);
-                    return;
-                }
-
-                await RespondAsync("Trying to get a gif...");
-                var httpRequest = (HttpWebRequest)WebRequest.Create(url);
-                httpRequest.Headers["Authorization"] = apiKey;
-
-
-                var httpResponse = (HttpWebResponse)httpRequest.GetResponse();
-                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-                {
-                    result = streamReader.ReadToEnd();
-                }
-                dynamic jsonObj = JObject.Parse(result);
-
-                string file = jsonObj.file;
-
-
-                EmbedBuilder builder = new EmbedBuilder();
-                builder.Description = $"**{userName}** calls **{guildUser}** an idiot";
-                builder.ImageUrl = file;
-                builder.Timestamp = DateTime.Now;
-
-                await ModifyOriginalResponseAsync(x => x.Content = "\u200D");
-                await ModifyOriginalResponseAsync(x => x.Embed = builder.Build());
-
-            }
-            catch (Exception e)
-            {
-                await _logger.Log(new LogMessage(LogSeverity.Info, "InteractionModule : sfwReactBakaGif", $"Bad request {e.Message}, Command: baka", null)); //WriteLine($"Error: {e.Message}");
-                await RespondAsync($"Oops something went wrong.\nPlease try again later.", ephemeral: true);
-                throw;
-            }
-        }
 
         //-------------------------------------------------------------------------------------------------------------------
         // reactions responses ends here
