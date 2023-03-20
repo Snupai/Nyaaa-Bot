@@ -76,7 +76,7 @@ namespace DC_BOT.Commands
                     Console.WriteLine($"[Command Migration] Skipping command '{globalCommand.Name}' because it isn't a slash command");
                 }
 
-                if (globalCommand.Id != clientAppInfo.Id) {
+                if (globalCommand.ApplicationId != clientAppInfo.Id) {
                     Console.WriteLine($"[Command Migration] Skipping command '{globalCommand.Name}' because it belongs to a different application");
                     continue;
                 }
@@ -90,6 +90,7 @@ namespace DC_BOT.Commands
             {
                 try
                 {
+                    Console.WriteLine($"[Command Migration] Creating command '{desiredGlobalCommand.Name}'");
                     await client.CreateGlobalApplicationCommandAsync(desiredGlobalCommand);
                 }
                 catch (HttpException exception)
@@ -131,6 +132,7 @@ namespace DC_BOT.Commands
                 {
                     try
                     {
+                        Console.WriteLine($"[Command Migration] Creating command '{desiredGuildCommand.Name}' for guild {guildId}");
                         await guild.CreateApplicationCommandAsync(desiredGuildCommand);
                     }
                     catch (HttpException exception)
