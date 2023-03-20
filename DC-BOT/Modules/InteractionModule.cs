@@ -1,19 +1,9 @@
 ﻿using Discord;
-using Discord.Commands;
 using Discord.Interactions;
-using Discord.Interactions.Builders;
-using Discord.Rest;
 using Discord.WebSocket;
 using DNet_V3_Tutorial.Log;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Yaml;
 using Newtonsoft.Json.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Channels;
-using static System.Net.WebRequestMethods;
-
 
 namespace DNet_V3_Tutorial
 {
@@ -32,79 +22,10 @@ namespace DNet_V3_Tutorial
             _logger = logger;
         }
 
-
-        // Basic slash command. [SlashCommand("name", "description")]
-        // Similar to text command creation, and their respective attributes
-        [DefaultMemberPermissions(GuildPermission.SendMessages)]
-        [SlashCommand("ping", "Receive a pong!")]
-        public async Task Ping()
-        {
-            await RespondAsync("pong! Latency: pinging...");
-            // New LogMessage created to pass desired info to the console using the existing Discord.Net LogMessage parameters
-            await _logger.Log(new LogMessage(LogSeverity.Info, "InteractionModule : Ping", $"User: {Context.User.Username}, Command: ping", null));
-            // Get the current latency
-            var latency = Context.Client.Latency;
-            // Respond to the user with the latency
-            await ModifyOriginalResponseAsync(x => x.Content = $"pong! Latency: {latency.ToString()}ms");
-        }
-
         //-------------------------------------------------------------------------------------------------------------------
         // Here starts reactions responses
         //-------------------------------------------------------------------------------------------------------------------
 
-        //[SlashCommand("baka", "Say baka to someone!")]
-        public async Task sfwReactBakaGif(string guildUser = "")
-        {
-            try
-            {
-                string result;
-                var url = "https://gallery.fluxpoint.dev/api/sfw/gif/baka";
-                var userName = Context.User.Username;
-                //var guildUser = "";      
-                if (userName == guildUser)
-                {
-                    await RespondAsync("Don't call yourself an idiot.", ephemeral: true);
-                    return;
-                }
-
-                await RespondAsync("Trying to get a gif...");
-                var httpRequest = (HttpWebRequest)WebRequest.Create(url);
-                httpRequest.Headers["Authorization"] = apiKey;
-
-
-                var httpResponse = (HttpWebResponse)httpRequest.GetResponse();
-                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-                {
-                    result = streamReader.ReadToEnd();
-                }
-                dynamic jsonObj = JObject.Parse(result);
-
-                string file = jsonObj.file;
-
-
-                EmbedBuilder builder = new EmbedBuilder();
-                builder.Description = $"**{userName}** calls **{guildUser}** an idiot";
-                builder.ImageUrl = file;
-                builder.Timestamp = DateTime.Now;
-
-                await ModifyOriginalResponseAsync(x => x.Content = "\u200D");
-                await ModifyOriginalResponseAsync(x => x.Embed = builder.Build());
-
-            }
-            catch (Exception e)
-            {
-                await _logger.Log(new LogMessage(LogSeverity.Info, "InteractionModule : sfwReactBakaGif", $"Bad request {e.Message}, Command: baka", null)); //WriteLine($"Error: {e.Message}");
-                await RespondAsync($"Oops something went wrong.\nPlease try again later.", ephemeral: true);
-                throw;
-            }
-        }
-       [MessageCommand("baka")]
-        public async Task sfwReactBakaGifMessageCommand(IMessage message)
-        {
-            var author = Convert.ToString(message.Author.Username);
-            if (!message.Author.IsBot) await sfwReactBakaGif(author);
-            else await RespondAsync("Try a user instead of a Bot.", ephemeral: true);
-        }
 
         //-------------------------------------------------------------------------------------------------------------------
         // reactions responses ends here
