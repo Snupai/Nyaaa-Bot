@@ -6,14 +6,14 @@ using System.Net;
 
 namespace DC_BOT.Commands
 {
-    internal class BiteCommandHandler : ICommandHandler
+    internal class TickleCommandHandler : ICommandHandler
     {
         private readonly ILogger _logger;
         private string apiKey = Environment.GetEnvironmentVariable("apiKey");
 
         public bool IsGuildCommand => true;
 
-        public BiteCommandHandler(ILogger logger)
+        public TickleCommandHandler(ILogger logger)
         {
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -23,18 +23,18 @@ namespace DC_BOT.Commands
             try
             {
                 string result;
-                var url = "https://gallery.fluxpoint.dev/api/sfw/gif/bite";
+                var url = "https://gallery.fluxpoint.dev/api/sfw/gif/tickle";
                 var userName = command.User.Username;
                 var thisUser = (SocketGuildUser)command.Data.Options.First().Value;
                 var mentionedUser = thisUser.Username;
                 if (userName == mentionedUser)
                 {
-                    await command.RespondAsync("Don't bite yourself.", ephemeral: true);
+                    await command.RespondAsync("Don't tickle yourself.", ephemeral: true);
                     return;
                 }
                 if (thisUser.IsBot)
                 {
-                    await command.RespondAsync("Try with a human not a bot.", ephemeral: true);
+                    await command.RespondAsync("You can't tickle a bot.", ephemeral: true);
                     return;
                 }
 
@@ -54,7 +54,7 @@ namespace DC_BOT.Commands
 
 
                 EmbedBuilder builder = new EmbedBuilder();
-                builder.Description = $"**{userName}** bites **{mentionedUser}**";
+                builder.Description = $"**{userName}** tickles **{mentionedUser}**";
                 builder.ImageUrl = file;
                 builder.Timestamp = DateTime.Now;
 
@@ -64,7 +64,7 @@ namespace DC_BOT.Commands
             }
             catch (Exception e)
             {
-                await this._logger.Log(new LogMessage(LogSeverity.Info, "CommandHandler : BiteCommandHandler", $"Bad request {e.Message}, Command: bite", null)); //WriteLine($"Error: {e.Message}");
+                await this._logger.Log(new LogMessage(LogSeverity.Info, "CommandHandler : TickleCommandHandler", $"Bad request {e.Message}, Command: tickle", null)); //WriteLine($"Error: {e.Message}");
                 await command.RespondAsync($"Oops something went wrong.\nPlease try again later.", ephemeral: true);
                 throw;
             }
@@ -72,11 +72,11 @@ namespace DC_BOT.Commands
 
         public SlashCommandProperties Initialize()
         {
-            SlashCommandBuilder globalCommandBite = new SlashCommandBuilder();
-            globalCommandBite.WithName("bite");
-            globalCommandBite.WithDescription("Bite a someone.");
-            globalCommandBite.AddOption("user", ApplicationCommandOptionType.User, "Choose a user.", isRequired: true);
-            return globalCommandBite.Build();
+            SlashCommandBuilder globalCommandTickle = new SlashCommandBuilder();
+            globalCommandTickle.WithName("tickle");
+            globalCommandTickle.WithDescription("Tickle someone.");
+            globalCommandTickle.AddOption("user", ApplicationCommandOptionType.User, "Choose a user.", isRequired: true);
+            return globalCommandTickle.Build();
         }
     }
 }

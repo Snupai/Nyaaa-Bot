@@ -38,7 +38,7 @@ namespace DC_BOT.Commands
                     return;
                 }
 
-                await command.RespondAsync("Trying to get a gif...");
+                await command.RespondAsync("<a:Loading:1087645285628526592> Trying to get a gif...");
                 var httpRequest = (HttpWebRequest)WebRequest.Create(url);
                 httpRequest.Headers["Authorization"] = apiKey;
 

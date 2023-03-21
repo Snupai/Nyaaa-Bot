@@ -76,6 +76,12 @@ namespace DNet_V3_Tutorial
                     .AddSingleton<ICommandHandler, PunchCommandHandler>()
                     .AddSingleton<ICommandHandler, ZeroTwoCommandHandler>()
                     .AddSingleton<ICommandHandler, PingCommandHandler>()
+                    .AddSingleton<ICommandHandler, SlapCommandHandler>()
+                    .AddSingleton<ICommandHandler, ShrugCommandHandler>()
+                    .AddSingleton<ICommandHandler, SmugCommandHandler>()
+                    .AddSingleton<ICommandHandler, StareCommandHandler>()
+                    .AddSingleton<ICommandHandler, WagCommandHandler>()
+                    .AddSingleton<ICommandHandler, TickleCommandHandler>()
                 )
                 .Build();
 
@@ -101,7 +107,7 @@ namespace DNet_V3_Tutorial
             // Subscribe to slash command log events
             commands.Log += _ => logger.Log(_);
 
-            //_client.Ready += Client_Ready;
+            // _client.Ready += Client_Ready;
 
             _client.Ready += async () =>
             {
@@ -144,7 +150,24 @@ namespace DNet_V3_Tutorial
 
             await Task.Delay(-1);
         }
-
+/*
+        public async Task Client_Ready()
+        {
+            List<ApplicationCommandProperties> applicationCommandProperties = new();
+            try
+            {
+                SlashCommandBuilder globalCommandHelp = new SlashCommandBuilder();
+                globalCommandHelp.WithName("help");
+                globalCommandHelp.WithDescription("Shows information about the bot.");
+                applicationCommandProperties.Add(globalCommandHelp.Build());
+                await _client.BulkOverwriteGlobalApplicationCommandsAsync(applicationCommandProperties.ToArray());
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
+*/
         static bool IsDebug()
         {
 #if !DEBUG
