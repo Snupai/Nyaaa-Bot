@@ -7,7 +7,7 @@ namespace DC_BOT.Commands.Neko
     {
         string apiKey = Environment.GetEnvironmentVariable("apiKey");
 
-        public Task<string> GetNeko(NekoKind kind)
+        public string GetNeko(NekoKind kind)
         {
             var url = this.GetUrl(kind);
 

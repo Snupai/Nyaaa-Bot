@@ -2,7 +2,7 @@
 {
     internal interface INekoService
     {
-        public Task<string> GetNeko(NekoKind kind);
+        public string GetNeko(NekoKind kind);
     }
 
     internal enum NekoKind { 

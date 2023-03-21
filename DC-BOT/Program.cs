@@ -1,4 +1,5 @@
 ﻿using DC_BOT.Commands;
+using DC_BOT.Commands.Neko;
 using Discord;
 using Discord.Commands;
 using Discord.Interactions;
@@ -84,6 +85,7 @@ namespace DNet_V3_Tutorial
                     .AddSingleton<ICommandHandler, TickleCommandHandler>()
                     .AddSingleton<ICommandHandler, WaveCommandHandler>()
                     .AddSingleton<ICommandHandler, WinkCommandHandler>()
+                    .AddNekoCommands()
                 )
                 .Build();
 
