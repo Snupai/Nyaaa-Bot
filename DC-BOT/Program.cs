@@ -82,6 +82,8 @@ namespace DNet_V3_Tutorial
                     .AddSingleton<ICommandHandler, StareCommandHandler>()
                     .AddSingleton<ICommandHandler, WagCommandHandler>()
                     .AddSingleton<ICommandHandler, TickleCommandHandler>()
+                    .AddSingleton<ICommandHandler, WaveCommandHandler>()
+                    .AddSingleton<ICommandHandler, WinkCommandHandler>()
                 )
                 .Build();
 
