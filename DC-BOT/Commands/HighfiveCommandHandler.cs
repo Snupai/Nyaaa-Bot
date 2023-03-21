@@ -65,7 +65,7 @@ namespace DC_BOT.Commands
             catch (Exception e)
             {
                 await this._logger.Log(new LogMessage(LogSeverity.Info, "CommandHandler : HighfiveCommandHandler", $"Bad request {e.Message}, Command: highfive", null)); //WriteLine($"Error: {e.Message}");
-                await command.RespondAsync($"Oops something went wrong.\nPlease try again later.", ephemeral: true);
+                await command.ModifyOriginalResponseAsync(x => x.Content = $"Oops something went wrong.\nPlease try again later.");
                 throw;
             }
         }

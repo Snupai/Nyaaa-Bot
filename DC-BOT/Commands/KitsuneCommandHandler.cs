@@ -25,7 +25,7 @@ namespace DC_BOT.Commands
                 string result;
                 var url = "https://gallery.fluxpoint.dev/api/sfw/img/kitsune";
 
-                await RespondAsync("<a:Loading:1087645285628526592> Trying to get a image...");
+                await command.RespondAsync("<a:Loading:1087645285628526592> Trying to get a image...");
                 var httpRequest = (HttpWebRequest)WebRequest.Create(url);
                 httpRequest.Headers["Authorization"] = apiKey;
 
@@ -49,7 +49,7 @@ namespace DC_BOT.Commands
             catch (Exception e)
             {
                 await _logger.Log(new LogMessage(LogSeverity.Info, "InteractionModule : KitsuneCommandHandler", $"Bad request, Command: kitsune", null)); //WriteLine($"Error: {e.Message}");
-                await RespondAsync($"Oops something went wrong.\nPlease try again later.", ephemeral: true);
+                await command.ModifyOriginalResponseAsync(x => x.Content = $"Oops something went wrong.\nPlease try again later.");
                 throw;
             }
         }
