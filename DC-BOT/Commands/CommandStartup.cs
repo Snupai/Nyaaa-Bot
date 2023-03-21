@@ -65,35 +65,11 @@ namespace DC_BOT.Commands
 
             var guild = this.client.GetGuild(UInt64.Parse(guildId));
 
-            var guildCommands = await guild.GetApplicationCommandsAsync();
-
             if (ShouldDelete)
-            {
-                foreach (SocketApplicationCommand guildCommand in guildCommands)
-                {
-                    if (guildCommand.Type != ApplicationCommandType.Slash)
-                    {
-                        Console.WriteLine($"[Command Migration] Skipping guild command '{guildCommand.Name}' for guild {guildId} because it isn't a slash command");
-                    }
-
-                    if (guildCommand.ApplicationId != clientAppInfo.Id)
-                    {
-                        Console.WriteLine($"[Command Migration] Skipping guild command '{guildCommand.Name}' for guild {guildId} because it belongs to a different application");
-                        continue;
-                    }
-
-                    Console.WriteLine($"[Command Migration] Deleting command '{guildCommand.Name}' for guild {guildId}");
-
-                    await guildCommand.DeleteAsync();
-                }
-            }            
-
-            foreach (var desiredGuildCommand in guildSlashCommands)
             {
                 try
                 {
-                    Console.WriteLine($"[Command Migration] Creating command '{desiredGuildCommand.Name}' for guild {guildId}");
-                    await guild.CreateApplicationCommandAsync(desiredGuildCommand);
+                    await guild.DeleteApplicationCommandsAsync();
                 }
                 catch (HttpException exception)
                 {
@@ -103,6 +79,19 @@ namespace DC_BOT.Commands
                     // You can send this error somewhere or just print it to the console, for this example we're just going to print it.
                     Console.WriteLine(json);
                 }
+            }
+
+            try
+            {
+                await guild.BulkOverwriteApplicationCommandAsync(guildSlashCommands.ToArray());
+            }
+            catch (HttpException exception)
+            {
+                // If our command was invalid, we should catch an ApplicationCommandException. This exception contains the path of the error as well as the error message. You can serialize the Error field in the exception to get a visual of where your error is.
+                var json = JsonConvert.SerializeObject(exception.Message, Formatting.Indented);
+
+                // You can send this error somewhere or just print it to the console, for this example we're just going to print it.
+                Console.WriteLine(json);
             }
         }
 
@@ -121,43 +110,7 @@ namespace DC_BOT.Commands
             }
             if (globalCommands == null || !globalCommands.Any()) return;
 
-            var clientAppInfo = await client.GetApplicationInfoAsync();
-            if (ShouldDelete) 
-            {
-                foreach (SocketApplicationCommand globalCommand in globalCommands)
-                {
-                    if (globalCommand.Type != ApplicationCommandType.Slash)
-                    {
-                        Console.WriteLine($"[Command Migration] Skipping command '{globalCommand.Name}' because it isn't a slash command");
-                    }
-
-                    if (globalCommand.ApplicationId != clientAppInfo.Id) {
-                        Console.WriteLine($"[Command Migration] Skipping command '{globalCommand.Name}' because it belongs to a different application");
-                        continue;
-                    }
-
-                    Console.WriteLine($"[Command Migration] Deleting command '{globalCommand.Name}'");
-
-                    await globalCommand.DeleteAsync();                
-                }
-            }
-
-            foreach (var desiredGlobalCommand in globalSlashCommands)
-            {
-                try
-                {
-                    Console.WriteLine($"[Command Migration] Creating command '{desiredGlobalCommand.Name}'");
-                    await client.CreateGlobalApplicationCommandAsync(desiredGlobalCommand);
-                }
-                catch (HttpException exception)
-                {
-                    // If our command was invalid, we should catch an ApplicationCommandException. This exception contains the path of the error as well as the error message. You can serialize the Error field in the exception to get a visual of where your error is.
-                    var json = JsonConvert.SerializeObject(exception.Message, Formatting.Indented);
-
-                    // You can send this error somewhere or just print it to the console, for this example we're just going to print it.
-                    Console.WriteLine(json);
-                }
-            }
+            await client.BulkOverwriteGlobalApplicationCommandsAsync(globalSlashCommands.ToArray());
         }
     }
 }
