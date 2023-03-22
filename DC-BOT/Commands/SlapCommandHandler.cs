@@ -54,7 +54,7 @@ namespace DC_BOT.Commands
 
 
                 EmbedBuilder builder = new EmbedBuilder();
-                builder.Description = $"**{userName}** slaps {mentionedUser}";
+                builder.Description = $"**{userName}** slaps **{mentionedUser}**";
                 builder.ImageUrl = file;
                 builder.Timestamp = DateTime.Now;
 
