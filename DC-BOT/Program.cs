@@ -1,4 +1,6 @@
 ﻿using DC_BOT.Commands;
+using DC_BOT.Commands.AnimeImages;
+using DC_BOT.Commands.Interactions;
 using DC_BOT.Commands.Neko;
 using Discord;
 using Discord.Commands;
@@ -59,43 +61,12 @@ namespace DNet_V3_Tutorial
                         DefaultRunMode = Discord.Commands.RunMode.Async
                     }))
                     // Add new command handlers here
-                    .AddSingleton<ICommandHandler, BakaCommandHandler>()
-                    .AddSingleton<ICommandHandler, BiteCommandHandler>()
-                    .AddSingleton<ICommandHandler, BlushCommandHandler>()
-                    .AddSingleton<ICommandHandler, CryCommandHandler>()
-                    .AddSingleton<ICommandHandler, DanceCommandHandler>()
-                    .AddSingleton<ICommandHandler, FeedCommandHandler>()
-                    .AddSingleton<ICommandHandler, FluffCommandHandler>()
-                    .AddSingleton<ICommandHandler, GrabCheeksCommandHandler>()
-                    .AddSingleton<ICommandHandler, HandHoldCommandHandler>()
-                    .AddSingleton<ICommandHandler, HighfiveCommandHandler>()
-                    .AddSingleton<ICommandHandler, HugCommandHandler>()
-                    .AddSingleton<ICommandHandler, KissCommandHandler>()
-                    .AddSingleton<ICommandHandler, LickCommandHandler>()
-                    .AddSingleton<ICommandHandler, PatCommandHandler>()
-                    .AddSingleton<ICommandHandler, PokeCommandHandler>()
-                    .AddSingleton<ICommandHandler, PunchCommandHandler>()
                     .AddSingleton<ICommandHandler, ZeroTwoCommandHandler>()
                     .AddSingleton<ICommandHandler, PingCommandHandler>()
-                    .AddSingleton<ICommandHandler, SlapCommandHandler>()
-                    .AddSingleton<ICommandHandler, ShrugCommandHandler>()
-                    .AddSingleton<ICommandHandler, SmugCommandHandler>()
-                    .AddSingleton<ICommandHandler, StareCommandHandler>()
-                    .AddSingleton<ICommandHandler, WagCommandHandler>()
-                    .AddSingleton<ICommandHandler, TickleCommandHandler>()
-                    .AddSingleton<ICommandHandler, WaveCommandHandler>()
-                    .AddSingleton<ICommandHandler, WinkCommandHandler>()
-                    .AddSingleton<ICommandHandler, AnimeCommandHandler>()
-                    .AddSingleton<ICommandHandler, AzurlaneCommandHandler>()
-                    .AddSingleton<ICommandHandler, ChibiCommandHandler>()
-                    .AddSingleton<ICommandHandler, ChristmasCommandHandler>()
-                    .AddSingleton<ICommandHandler, DDLCCommandHandler>()
-                    .AddSingleton<ICommandHandler, HalloweenCommandHandler>()
-                    .AddSingleton<ICommandHandler, HoloCommandHandler>()
-                    .AddSingleton<ICommandHandler, KitsuneCommandHandler>()
-                    .AddSingleton<ICommandHandler, MaidCommandHandler>()
-                    .AddSingleton<ICommandHandler, SenkoCommandHandler>()
+                    
                     .AddNekoCommands()
+                    .AddAnimeImageCommands()
+                    .AddInteractionCommands()
                 )
                 .Build();
 

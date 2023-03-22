@@ -4,7 +4,7 @@ using DNet_V3_Tutorial.Log;
 using Newtonsoft.Json.Linq;
 using System.Net;
 
-namespace DC_BOT.Commands
+namespace DC_BOT.Commands.AnimeImages
 {
     internal class AnimeCommandHandler : ICommandHandler
     {
@@ -15,7 +15,7 @@ namespace DC_BOT.Commands
 
         public AnimeCommandHandler(ILogger logger)
         {
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task HandleAsync(SocketSlashCommand command)
