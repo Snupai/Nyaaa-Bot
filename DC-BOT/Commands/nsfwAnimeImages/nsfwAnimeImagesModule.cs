@@ -25,6 +25,7 @@ namespace DC_BOT.Commands.nsfwAnimeImages
             services.AddSingleton<ICommandHandler, nsfwLewdCommandHandler>();
             services.AddSingleton<ICommandHandler, nsfwNekoCommandHandler>();
             services.AddSingleton<ICommandHandler, nsfwNekoparaCommandHandler>();
+            //services.AddSingleton<ICommandHandler, nsfwPantsuCommandHandler>();   api bad request (not implemented yet)
             services.AddSingleton<ICommandHandler, nsfwPantyhoseCommandHandler>();
             services.AddSingleton<ICommandHandler, nsfwPeeingCommandHandler>();
             services.AddSingleton<ICommandHandler, nsfwPetplayCommandHandler>();
@@ -33,7 +34,7 @@ namespace DC_BOT.Commands.nsfwAnimeImages
             services.AddSingleton<ICommandHandler, nsfwSoloCommandHandler>();
             //services.AddSingleton<ICommandHandler, nsfwSwimsuitCommandHandler>(); api bad request
             services.AddSingleton<ICommandHandler, nsfwTentacleCommandHandler>();
-            //services.AddSingleton<ICommandHandler, nsfwThighsCommandHandler>(); api bad request
+            //services.AddSingleton<ICommandHandler, nsfwThighsCommandHandler>();   api bad request
             services.AddSingleton<ICommandHandler, nsfwTrapCommandHandler>();
             services.AddSingleton<ICommandHandler, nsfwYaoiCommandHandler>();
             services.AddSingleton<ICommandHandler, nsfwYuriCommandHandler>();
