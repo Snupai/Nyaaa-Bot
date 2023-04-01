@@ -23,8 +23,6 @@ namespace DNet_V3_Tutorial
 
         // Program entry point
         public static Task Main(string[] args) => new program().MainAsync();
-        public string CustomInstallUrl { get; }
-        public string RoleConnectionsVerificationUrl { get; }
 
         public async Task MainAsync()
         {
