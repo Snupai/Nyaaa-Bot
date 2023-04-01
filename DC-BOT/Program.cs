@@ -23,6 +23,8 @@ namespace DNet_V3_Tutorial
 
         // Program entry point
         public static Task Main(string[] args) => new program().MainAsync();
+        public string CustomInstallUrl { get; }
+        public string RoleConnectionsVerificationUrl { get; }
 
         public async Task MainAsync()
         {
@@ -64,14 +66,13 @@ namespace DNet_V3_Tutorial
                     // Add new command handlers here
                     .AddSingleton<ICommandHandler, ZeroTwoCommandHandler>()
                     .AddSingleton<ICommandHandler, PingCommandHandler>()
-                    
+                    .AddSingleton<ICommandHandler, HelpCommandHandler>()
                     .AddNekoCommands()
                     .AddAnimeImageCommands()
                     .AddInteractionCommands()
                     .AddnsfwAnimeImageCommands()
                 )
                 .Build();
-
             await RunAsync(host);
         }
 
@@ -108,20 +109,22 @@ namespace DNet_V3_Tutorial
             };
 
             var commandStartup = new CommandStartup(_client, host);
-
+            
             Console.WriteLine("Do you want to migrate commands? If so type 'yes'");
 
             var response = Console.ReadLine();
             bool migrate = response == "yes";
 
-            if (migrate) {
+            if (migrate)
+            {
                 Console.WriteLine("Do you also want to delete old commands? If so type 'yes'");
                 var shouldDelete = Console.ReadLine() == "yes";
 
                 CommandStartup.ShouldDelete = shouldDelete;
             }
 
-            if (migrate) {
+            if (migrate)
+            {
                 _client.Ready += commandStartup.MigrateGuildCommands;
             }
 
@@ -129,7 +132,8 @@ namespace DNet_V3_Tutorial
             await _client.StartAsync();
             await commandStartup.Start();
 
-            if (migrate) {
+            if (migrate)
+            {
                 await commandStartup.MigrateCommands();
             }
 
@@ -137,24 +141,24 @@ namespace DNet_V3_Tutorial
 
             await Task.Delay(-1);
         }
-/*
-        public async Task Client_Ready()
-        {
-            List<ApplicationCommandProperties> applicationCommandProperties = new();
-            try
-            {
-                SlashCommandBuilder globalCommandHelp = new SlashCommandBuilder();
-                globalCommandHelp.WithName("help");
-                globalCommandHelp.WithDescription("Shows information about the bot.");
-                applicationCommandProperties.Add(globalCommandHelp.Build());
-                await _client.BulkOverwriteGlobalApplicationCommandsAsync(applicationCommandProperties.ToArray());
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
-        }
-*/
+        /*
+                public async Task Client_Ready()
+                {
+                    List<ApplicationCommandProperties> applicationCommandProperties = new();
+                    try
+                    {
+                        SlashCommandBuilder globalCommandHelp = new SlashCommandBuilder();
+                        globalCommandHelp.WithName("help");
+                        globalCommandHelp.WithDescription("Shows information about the bot.");
+                        applicationCommandProperties.Add(globalCommandHelp.Build());
+                        await _client.BulkOverwriteGlobalApplicationCommandsAsync(applicationCommandProperties.ToArray());
+                    }
+                    catch (Exception ex)
+                    {
+                        throw;
+                    }
+                }
+        */
         static bool IsDebug()
         {
 #if !DEBUG
