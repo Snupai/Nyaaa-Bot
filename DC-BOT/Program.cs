@@ -64,7 +64,7 @@ namespace DNet_V3_Tutorial
                     // Add new command handlers here
                     .AddSingleton<ICommandHandler, ZeroTwoCommandHandler>()
                     .AddSingleton<ICommandHandler, PingCommandHandler>()
-                    
+                    .AddSingleton<ICommandHandler, HelpCommandHandler>()
                     .AddNekoCommands()
                     .AddAnimeImageCommands()
                     .AddInteractionCommands()
