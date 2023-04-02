@@ -3,6 +3,7 @@ using DC_BOT.Commands.AnimeImages;
 using DC_BOT.Commands.Interactions;
 using DC_BOT.Commands.Neko;
 using DC_BOT.Commands.nsfwAnimeImages;
+using DC_BOT.Commands.Utility;
 using Discord;
 using Discord.Commands;
 using Discord.Interactions;
@@ -69,6 +70,7 @@ namespace DNet_V3_Tutorial
                     .AddAnimeImageCommands()
                     .AddInteractionCommands()
                     .AddnsfwAnimeImageCommands()
+                    .AddUtilityCommands()
                 )
                 .Build();
             await RunAsync(host);
