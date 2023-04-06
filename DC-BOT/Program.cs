@@ -36,6 +36,9 @@ namespace DNet_V3_Tutorial
             .Build();
             Environment.SetEnvironmentVariable("apiKey", config["tokens:fluxpoint-api"]);
             Environment.SetEnvironmentVariable("guildId", config["testGuild"]);
+            Environment.SetEnvironmentVariable("OpenAI-org", config["tokens:openai-org"]);
+            Environment.SetEnvironmentVariable("OpenAI-api", config["tokens:openai-api"]);
+            Environment.SetEnvironmentVariable("BingChat-cookie", config["tokens:bing-cookie"]);
             using IHost host = Host.CreateDefaultBuilder()
                 .ConfigureServices((_, services) =>
                     services
@@ -66,6 +69,8 @@ namespace DNet_V3_Tutorial
                     .AddSingleton<ICommandHandler, ZeroTwoCommandHandler>()
                     .AddSingleton<ICommandHandler, PingCommandHandler>()
                     .AddSingleton<ICommandHandler, HelpCommandHandler>()
+                    .AddSingleton<ICommandHandler, AskCommandHandler>()
+                    .AddSingleton<ICommandHandler, BingCommandHandler>()
                     .AddNekoCommands()
                     .AddAnimeImageCommands()
                     .AddInteractionCommands()
