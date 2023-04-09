@@ -22,18 +22,18 @@ namespace DC_BOT.Commands
         public async Task HandleAsync(SocketSlashCommand command)
         {
             await command.DeferAsync();
-            string message = command.Data.Options.First().Value.ToString();
+            var message = command.Data.Options.First().Value.ToString();
 
             // New LogMessage created to pass desired info to the console using the existing Discord.Net LogMessage parameters
             await logger.Log(new LogMessage(LogSeverity.Info, "InteractionModule : Bing", $"User: {command.User.Username}, Command: bing", null));
             // Respond to the user with the latency
             // Construct the chat client
-            var client = new BingChatClient(new BingChatClientOptions
+            var bclient = new BingChatClient(new BingChatClientOptions
             {
                 // The "_U" cookie's value
                 Cookie = BingChat_cookie
             });
-            var answer = await client.AskAsync(message);
+            var answer = await bclient.AskAsync(message);
 
 
             await command.ModifyOriginalResponseAsync(x => x.Content = $"{answer}");
