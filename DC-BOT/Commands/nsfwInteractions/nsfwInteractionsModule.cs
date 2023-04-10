@@ -27,10 +27,7 @@ namespace DC_BOT.Commands.nsfwInteractions
             services.AddSingleton<ICommandHandler, nsfwToysCommandHandler>();
             services.AddSingleton<ICommandHandler, nsfwYuriCommandHandler>();
 
-
             //services.AddSingleton<ICommandHandler, (Interaction)CommandHandler>();
-
-
             return services;
         }
     }

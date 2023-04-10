@@ -72,6 +72,4 @@ namespace DC_BOT.Commands
             public string Owner { get; set; }
         }
     }
-
-    
 }

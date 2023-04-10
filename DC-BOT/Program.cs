@@ -3,6 +3,7 @@ using DC_BOT.Commands.AnimeImages;
 using DC_BOT.Commands.Interactions;
 using DC_BOT.Commands.Neko;
 using DC_BOT.Commands.nsfwAnimeImages;
+using DC_BOT.Commands.nsfwInteractions;
 using DC_BOT.Commands.Utility;
 using Discord;
 using Discord.Commands;
@@ -64,6 +65,7 @@ namespace DNet_V3_Tutorial
                         DefaultRunMode = Discord.Commands.RunMode.Async
                     }))
                     // Add new command handlers here
+                    .AddSingleton<ICommandHandler, FemboyCommandHandler>()
                     .AddSingleton<ICommandHandler, ZeroTwoCommandHandler>()
                     .AddSingleton<ICommandHandler, PingCommandHandler>()
                     .AddSingleton<ICommandHandler, HelpCommandHandler>()
@@ -73,6 +75,7 @@ namespace DNet_V3_Tutorial
                     .AddAnimeImageCommands()
                     .AddInteractionCommands()
                     .AddnsfwAnimeImageCommands()
+                    .AddnsfwInteractionCommands()
                     .AddUtilityCommands()
                 )
                 .Build();

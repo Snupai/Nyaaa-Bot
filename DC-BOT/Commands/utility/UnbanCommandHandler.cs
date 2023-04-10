@@ -25,36 +25,21 @@ namespace DC_BOT.Commands
             try
             {
                 await command.RespondAsync("<a:Loading:1087645285628526592> Unbanning...");
-                var userName = command.User;
-                var thisUser = Convert.ToUInt64(command.Data.Options.First().Value);
-                //var guild = (SocketGuild)command.GuildLocale.FirstOrDefault();
-                //var mentionedUser = thisUser.Username;
-                var reason = (String)command.Data.Options.Last().Value;
-                /*if (userName.Username == mentionedUser)
-                {
-                    await command.RespondAsync("You can't unban yourself.\nYou are not even banned...", ephemeral: true);
-                    return;
-                }*/
-
-                var guildid = (ulong)command.GuildId;
-                var leguild = _client.GetGuild(guildid);
-
-                var Userbanned = leguild.GetBanAsync(thisUser).Result.User;
-
-                await leguild.RemoveBanAsync(Userbanned);
+                var userName = (SocketGuildUser)command.User;
+                var thisUser = ulong.Parse((string)command.Data.Options.First().Value);
                 
+                await userName.Guild.RemoveBanAsync(thisUser);
+
                 EmbedBuilder builder = new EmbedBuilder();
-                builder.Description = $"**{thisUser}** was unbanned by **{userName.Mention}**\n{reason}";
-                //builder.ImageUrl = file;
+                builder.Description = $"**<@{thisUser}>** was unbanned by **{userName.Mention}**";
                 builder.Timestamp = DateTime.Now;
 
                 await command.ModifyOriginalResponseAsync(x => x.Content = "\u200D");
                 await command.ModifyOriginalResponseAsync(x => x.Embed = builder.Build());
-
             }
             catch (Exception e)
             {
-                await this._logger.Log(new LogMessage(LogSeverity.Info, "CommandHandler : UnbanCommandHandler", $"Bad request {e.Message}, Command: unban", null)); //WriteLine($"Error: {e.Message}");
+                await this._logger.Log(new LogMessage(LogSeverity.Info, "CommandHandler : UnbanCommandHandler", $"Bad request {e.Message}, Command: unban", null));
                 await command.ModifyOriginalResponseAsync(x => x.Content = $"Oops something went wrong.\nPlease try again later.");
                 throw;
             }
@@ -65,7 +50,7 @@ namespace DC_BOT.Commands
             SlashCommandBuilder globalCommandUnban = new SlashCommandBuilder();
             globalCommandUnban.WithName("unban");
             globalCommandUnban.WithDescription("unban someone.");
-            globalCommandUnban.AddOption("user-id", ApplicationCommandOptionType.String, "Choose a user.", isRequired: true);
+            globalCommandUnban.AddOption("user-id", ApplicationCommandOptionType.String, "Id of the user to unban.", isRequired: true);
             return globalCommandUnban.Build();
         }
     }

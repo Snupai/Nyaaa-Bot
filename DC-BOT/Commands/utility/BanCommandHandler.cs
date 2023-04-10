@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using DNet_V3_Tutorial.Log;
 using Newtonsoft.Json.Linq;
@@ -21,36 +22,26 @@ namespace DC_BOT.Commands
         {
             try
             {
-                var userName = command.User;
+                var userName = (SocketGuildUser)command.User;
                 var thisUser = (SocketGuildUser)command.Data.Options.First().Value;
                 var mentionedUser = thisUser.Username;
-                var reason = (String)command.Data.Options.Last().Value;
+                var reason = command.Data.Options.OfType<string>().FirstOrDefault();
+                var days = (int)command.Data.Options.OfType<long>().FirstOrDefault();
+
                 if (userName.Username == mentionedUser)
                 {
                     await command.RespondAsync("You can't ban yourself.", ephemeral: true);
                     return;
                 }
-                
-                /*if (thisUser.Hierarchy >= )
+                else if (thisUser.Hierarchy >= userName.Hierarchy)
                 {
-                    await command.RespondAsync("Try with a human not a bot.", ephemeral: true);
+                    await command.RespondAsync("The User you are trying to ban has a higher role than you.", ephemeral: true);
                     return;
-                }*/
+                }
 
                 await command.RespondAsync("<a:Loading:1087645285628526592> Banning...");
-                //var httpRequest = (HttpWebRequest)WebRequest.Create(url);
-                //httpRequest.Headers["Authorization"] = apiKey;
-                await thisUser.Guild.AddBanAsync(thisUser, 0, reason);
 
-                //var httpResponse = (HttpWebResponse)httpRequest.GetResponse();
-                //using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
-                //{
-                //    result = streamReader.ReadToEnd();
-                //}
-                //dynamic jsonObj = JObject.Parse(result);
-
-                //string file = jsonObj.file;
-
+                await userName.Guild.AddBanAsync(thisUser, days, reason);
 
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.Description = $"**{thisUser.Mention}** was banned by **{userName.Mention}**\n{reason}";
@@ -75,6 +66,7 @@ namespace DC_BOT.Commands
             globalCommandBan.WithName("ban");
             globalCommandBan.WithDescription("ban someone.");
             globalCommandBan.AddOption("user", ApplicationCommandOptionType.User, "Choose a user.", isRequired: true);
+            globalCommandBan.AddOption("time", ApplicationCommandOptionType.Integer, "The number of days of the banned user's messages to purge.", minValue: 0, maxValue: 7);
             globalCommandBan.AddOption("reason", ApplicationCommandOptionType.String, "Define a reason for the ban.");
             return globalCommandBan.Build();
         }
