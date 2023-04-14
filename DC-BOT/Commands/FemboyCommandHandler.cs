@@ -4,6 +4,7 @@ using Discord.WebSocket;
 using DNet_V3_Tutorial.Log;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using System.Data;
 using System.Web;
 
 namespace DC_BOT.Commands
@@ -27,13 +28,13 @@ namespace DC_BOT.Commands
         public async Task HandleAsync(SocketSlashCommand command)
         {
             await command.DeferAsync();
-            string type = command.Data.Options.OfType<string>().FirstOrDefault();
+            var type = command.Data.Options.LastOrDefault();
 
             using (HttpClient client = new HttpClient())
             {
                 var r = new Random();
 
-                if (type == "r34")
+                if (type.Value.ToString() == "r34")
                 {
                     UriBuilder urlBuilder = new UriBuilder(r34baseUrl);
                     var parameters = HttpUtility.ParseQueryString(string.Empty);
@@ -60,7 +61,7 @@ namespace DC_BOT.Commands
                     await command.ModifyOriginalResponseAsync(x => x.Content = "\u200D");
                     await command.ModifyOriginalResponseAsync(x => x.Embed = builder.Build());
                 }
-                else if (type == "realbooru")
+                else if (type.Value.ToString() == "realbooru")
                 {
                     UriBuilder urlBuilder = new UriBuilder(realbooruBaseUrl);
                     var parameters = HttpUtility.ParseQueryString(string.Empty);
@@ -89,6 +90,7 @@ namespace DC_BOT.Commands
                 }
                 else
                 {
+                    await command.ModifyOriginalResponseAsync(x => x.Content = type.Value.ToString());
                     throw new Exception("uhhh weird");
                 }
             }
