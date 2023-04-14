@@ -82,7 +82,7 @@ namespace DC_BOT.Commands
 
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.Description = $"Femboy <:AstolfoSugoi:698271845689983057>";
-                    builder.ImageUrl = realbooruResponse.Owner;
+                    builder.ImageUrl = realbooruResponse.FileUrl;
                     builder.Timestamp = DateTime.Now;
 
                     await command.ModifyOriginalResponseAsync(x => x.Content = "\u200D");
