@@ -14,6 +14,9 @@ namespace DC_BOT.Commands.Utility
         {
             services.AddSingleton<ICommandHandler, BanCommandHandler>();
             services.AddSingleton<ICommandHandler, UnbanCommandHandler>();
+            services.AddSingleton<ICommandHandler, KickCommandHandler>();
+            services.AddSingleton<ICommandHandler,MuteCommandHandler>();
+            services.AddSingleton<ICommandHandler,UnmuteCommandHandler>();
             //services.AddSingleton<ICommandHandler, (Interaction)CommandHandler>();
             return services;
         }
