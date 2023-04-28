@@ -42,6 +42,7 @@ namespace DC_BOT.Commands
                 if (time.Contains("d")) { time.Split('d'); timespan = new TimeSpan(Convert.ToInt16(time[0]), 0, 0, 0); }
                 else if (time.Contains("h")) { time.Split('h'); timespan = new TimeSpan(Convert.ToInt16(time[0]), 0, 0); }
                 else if (time.Contains("m")) { time.Split('m'); timespan = new(0, Convert.ToInt16(time[0]), 0); }
+                else throw new Exception("uhhh idk no time ig");
                 
 
 
@@ -72,7 +73,7 @@ namespace DC_BOT.Commands
             globalCommandMute.WithName("mute");
             globalCommandMute.WithDescription("mute someone.");
             globalCommandMute.AddOption("user", ApplicationCommandOptionType.User, "Choose a user.", isRequired: true);
-            globalCommandMute.AddOption("time", ApplicationCommandOptionType.String, "Time span to mute ex: 7d 6h 10m", minValue: 0, maxValue: 7);
+            globalCommandMute.AddOption("time", ApplicationCommandOptionType.String, "Time span to mute ex: 7d 6h 10m", isRequired: true);
             //globalCommandMute.AddOption("reason", ApplicationCommandOptionType.String, "Define a reason for the mute.");
             return globalCommandMute.Build();
         }
