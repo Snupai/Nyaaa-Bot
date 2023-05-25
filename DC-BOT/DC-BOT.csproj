@@ -11,16 +11,10 @@
   <ItemGroup>
     <Compile Remove="Commands\AnimeImages - Kopieren\**" />
     <Compile Remove="Commands\Images\**" />
-    <Compile Remove="Commands\NewFolder\**" />
-    <Compile Remove="Extensions\**" />
     <EmbeddedResource Remove="Commands\AnimeImages - Kopieren\**" />
     <EmbeddedResource Remove="Commands\Images\**" />
-    <EmbeddedResource Remove="Commands\NewFolder\**" />
-    <EmbeddedResource Remove="Extensions\**" />
     <None Remove="Commands\AnimeImages - Kopieren\**" />
     <None Remove="Commands\Images\**" />
-    <None Remove="Commands\NewFolder\**" />
-    <None Remove="Extensions\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,6 +32,11 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
     <PackageReference Include="YamlDotNet" Version="8.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Commands\NewFolder\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
 
   <ItemGroup>
